@@ -1,0 +1,38 @@
+<div
+  style="
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+    width: 100%;
+  "
+>
+  <div style="width: 100%;">
+    <h2 style="text-align: center;">Shaurya Participants List</h2>
+    <table
+      style="
+        width: 100%;
+        border-collapse: collapse;
+      "
+    >
+      <thead>
+        <tr>
+          <th style="border: 1px solid black; padding: 8px; background-color: lightpink; color: black;">ID</th>
+          <th style="border: 1px solid black; padding: 8px; background-color: lightpink; color: black;">Name</th>
+          <th style="border: 1px solid black; padding: 8px; background-color: lightpink; color: black;">First Name</th>
+          <th style="border: 1px solid black; padding: 8px; background-color: lightpink; color: black;">Last Name</th>
+          <th style="border: 1px solid black; padding: 8px; background-color: lightpink; color: black;">Place</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let post of data">
+          <td style="border: 1px solid black; padding: 8px;">{{ post.id }}</td>
+          <td style="border: 1px solid black; padding: 8px;">{{ post.name }}</td>
+          <td style="border: 1px solid black; padding: 8px;">{{ post.firstName }}</td>
+          <td style="border: 1px solid black; padding: 8px;">{{ post.lastName }}</td>
+          <td style="border: 1px solid black; padding: 8px;">{{ post.place }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

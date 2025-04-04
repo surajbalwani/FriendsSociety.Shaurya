@@ -18,11 +18,10 @@ namespace FriendsSociety.Shaurya.Controllers
             _dataContext = dataContext;
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllUsers()
         {
             var applicationUsers = await _dataContext.ApplicationUsers.ToListAsync();
-
             return Ok(applicationUsers);
         }
 
