@@ -11,5 +11,6 @@ namespace FriendsSociety.Shaurya.Data
         }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Participants> Participants { get; set; }
     }
 }
