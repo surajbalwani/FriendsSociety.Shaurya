@@ -12,47 +12,47 @@ namespace FriendsSociety.Shaurya.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ParticipantsController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public ParticipantsController(DataContext context)
+        public UsersController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: api/Participants
+        // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Participants>>> GetParticipants()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Participants.ToListAsync();
+            return await _context.Users.ToListAsync();
         }
 
-        // GET: api/Participants/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Participants>> GetParticipants(int id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            var participants = await _context.Participants.FindAsync(id);
+            var user = await _context.Users.FindAsync(id);
 
-            if (participants == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return participants;
+            return user;
         }
 
-        // PUT: api/Participants/5
+        // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutParticipants(int id, Participants participants)
+        public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != participants.ParticipantId)
+            if (id != user.UserID)
             {
                 return BadRequest();
             }
 
-            _context.Entry(participants).State = EntityState.Modified;
+            _context.Entry(user).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +60,7 @@ namespace FriendsSociety.Shaurya.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ParticipantsExists(id))
+                if (!UserExists(id))
                 {
                     return NotFound();
                 }
@@ -73,36 +73,36 @@ namespace FriendsSociety.Shaurya.Controllers
             return NoContent();
         }
 
-        // POST: api/Participants
+        // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Participants>> PostParticipants(Participants participants)
+        public async Task<ActionResult<User>> PostUser(User user)
         {
-            _context.Participants.Add(participants);
+            _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetParticipants", new { id = participants.ParticipantId }, participants);
+            return CreatedAtAction("GetUser", new { id = user.UserID }, user);
         }
 
-        // DELETE: api/Participants/5
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteParticipants(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
-            var participants = await _context.Participants.FindAsync(id);
-            if (participants == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Participants.Remove(participants);
+            _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool ParticipantsExists(int id)
+        private bool UserExists(int id)
         {
-            return _context.Participants.Any(e => e.ParticipantId == id);
+            return _context.Users.Any(e => e.UserID == id);
         }
     }
 }

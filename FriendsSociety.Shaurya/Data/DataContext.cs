@@ -1,16 +1,83 @@
-﻿using FriendsSociety.Shaurya.Entities;
+﻿using FriendsSociety.Shaurya.Configuration;
+using FriendsSociety.Shaurya.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace FriendsSociety.Shaurya.Data
 {
     public class DataContext : DbContext
     {
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        private readonly bool _shouldSeed;
+
+        public DataContext(DbContextOptions<DataContext> options, IOptions<DatabaseSettings> dbSettings) : base(options)
         {
-            
+            _shouldSeed = dbSettings.Value.SeedDemoData;
         }
 
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<Participants> Participants { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<Organization> Organizations { get; set; }
+        public DbSet<AbilityType> AbilityTypes { get; set; }
+        public DbSet<Activity> Activities { get; set; }
+        public DbSet<Ground> Grounds { get; set; }
+        public DbSet<ActivityCategory> ActivityCategories { get; set; }
+        public DbSet<GroundAllocation> GroundAllocations { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // User → Role
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Role)
+                .WithMany(r => r.Users)
+                .HasForeignKey(u => u.RoleID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // User → AbilityType
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.AbilityType)
+                .WithMany(a => a.Users)
+                .HasForeignKey(u => u.AbilityTypeID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // User → Organization
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Organization)
+                .WithMany(o => o.Users)
+                .HasForeignKey(u => u.OrganizationID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ActivityCategory → Activity & AbilityType
+            modelBuilder.Entity<ActivityCategory>()
+                .HasOne(ac => ac.Activity)
+                .WithMany(a => a.ActivityCategories)
+                .HasForeignKey(ac => ac.ActivityID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ActivityCategory>()
+                .HasOne(ac => ac.AbilityType)
+                .WithMany(at => at.ActivityCategories)
+                .HasForeignKey(ac => ac.AbilityTypeID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // GroundAllocation → Activity & Ground
+            modelBuilder.Entity<GroundAllocation>()
+                .HasOne(ga => ga.Activity)
+                .WithMany(a => a.GroundAllocations)
+                .HasForeignKey(ga => ga.ActivityID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<GroundAllocation>()
+                .HasOne(ga => ga.Ground)
+                .WithMany(g => g.GroundAllocations)
+                .HasForeignKey(ga => ga.GroundID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            if (_shouldSeed)
+            {
+                ModelSeeder.Seed(modelBuilder);
+            }
+        }
     }
 }

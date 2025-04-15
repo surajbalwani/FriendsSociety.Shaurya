@@ -4,6 +4,7 @@ using FriendsSociety.Shaurya.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriendsSociety.Shaurya.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20250415145339_fixed_null_warnings")]
+    partial class fixed_null_warnings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,29 +46,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("AbilityTypeID");
 
                     b.ToTable("AbilityTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            AbilityTypeID = 1,
-                            Description = "Partial or total inability to hear",
-                            IsDeleted = false,
-                            Name = "Hearing Impairment"
-                        },
-                        new
-                        {
-                            AbilityTypeID = 2,
-                            Description = "Partial or total inability to see",
-                            IsDeleted = false,
-                            Name = "Visual Impairment"
-                        },
-                        new
-                        {
-                            AbilityTypeID = 3,
-                            Description = "Difficulty walking or moving",
-                            IsDeleted = false,
-                            Name = "Mobility Impairment"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Activity", b =>
@@ -89,22 +69,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("ActivityID");
 
                     b.ToTable("Activities");
-
-                    b.HasData(
-                        new
-                        {
-                            ActivityID = 1,
-                            IsDeleted = false,
-                            Name = "Wheelchair Basketball",
-                            Rules = "Standard 5v5 rules apply"
-                        },
-                        new
-                        {
-                            ActivityID = 2,
-                            IsDeleted = false,
-                            Name = "Blind Running",
-                            Rules = "Tethered guide required"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.ActivityCategory", b =>
@@ -131,14 +95,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasIndex("ActivityID");
 
                     b.ToTable("ActivityCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            ActivityCategoryID = 1,
-                            AbilityTypeID = 2,
-                            ActivityID = 2
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Ground", b =>
@@ -159,20 +115,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("GroundID");
 
                     b.ToTable("Grounds");
-
-                    b.HasData(
-                        new
-                        {
-                            GroundID = 1,
-                            Location = "City Sports Complex",
-                            Name = "Main Arena"
-                        },
-                        new
-                        {
-                            GroundID = 2,
-                            Location = "Community Park",
-                            Name = "Open Ground"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.GroundAllocation", b =>
@@ -202,24 +144,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasIndex("GroundID");
 
                     b.ToTable("GroundAllocations");
-
-                    b.HasData(
-                        new
-                        {
-                            GroundAllocationID = 1,
-                            ActivityID = 1,
-                            EndTime = new DateTime(2025, 5, 1, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            GroundID = 1,
-                            StartTime = new DateTime(2025, 5, 1, 10, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            GroundAllocationID = 2,
-                            ActivityID = 2,
-                            EndTime = new DateTime(2025, 5, 1, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            GroundID = 2,
-                            StartTime = new DateTime(2025, 5, 1, 13, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Organization", b =>
@@ -243,15 +167,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("OrganizationID");
 
                     b.ToTable("Organizations");
-
-                    b.HasData(
-                        new
-                        {
-                            OrganizationID = 1,
-                            Contact = "hope@example.org",
-                            IsDeleted = false,
-                            Name = "Hope Foundation"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Role", b =>
@@ -272,20 +187,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("RoleID");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            RoleID = 1,
-                            Name = "Participant",
-                            Permissions = "ViewActivities"
-                        },
-                        new
-                        {
-                            RoleID = 2,
-                            Name = "Volunteer",
-                            Permissions = "ManageActivities,HelpParticipants"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.User", b =>
@@ -327,30 +228,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasIndex("RoleID");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            UserID = 1,
-                            AbilityTypeID = 1,
-                            Age = 24,
-                            Contact = "arjun@example.com",
-                            IsDeleted = false,
-                            Name = "Arjun Mehta",
-                            OrganizationID = 1,
-                            RoleID = 1
-                        },
-                        new
-                        {
-                            UserID = 2,
-                            AbilityTypeID = 2,
-                            Age = 30,
-                            Contact = "nikita@example.com",
-                            IsDeleted = false,
-                            Name = "Nikita Shah",
-                            OrganizationID = 1,
-                            RoleID = 2
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.ActivityCategory", b =>

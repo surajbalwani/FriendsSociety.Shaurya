@@ -1,3 +1,4 @@
+using FriendsSociety.Shaurya.Configuration;
 using FriendsSociety.Shaurya.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,7 +24,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<DataContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-
+builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
