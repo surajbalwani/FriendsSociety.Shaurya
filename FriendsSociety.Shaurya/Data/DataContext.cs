@@ -2,10 +2,11 @@
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FriendsSociety.Shaurya.Data
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<User, Role, string>
     {
         private readonly bool _shouldSeed;
 
@@ -14,8 +15,8 @@ namespace FriendsSociety.Shaurya.Data
             _shouldSeed = dbSettings.Value.SeedDemoData;
         }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        override public DbSet<User> Users { get; set; }
+        override public DbSet<Role> Roles { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<AbilityType> AbilityTypes { get; set; }
         public DbSet<Activity> Activities { get; set; }
@@ -26,13 +27,6 @@ namespace FriendsSociety.Shaurya.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // User → Role
-            modelBuilder.Entity<User>()
-                .HasOne(u => u.Role)
-                .WithMany(r => r.Users)
-                .HasForeignKey(u => u.RoleID)
-                .OnDelete(DeleteBehavior.Restrict);
 
             // User → AbilityType
             modelBuilder.Entity<User>()
@@ -76,7 +70,7 @@ namespace FriendsSociety.Shaurya.Data
 
             if (_shouldSeed)
             {
-                ModelSeeder.Seed(modelBuilder);
+                // ModelSeeder.Seed(modelBuilder); // Removed: now using service-based seeding only
             }
         }
     }

@@ -1,6 +1,9 @@
 using FriendsSociety.Shaurya.Configuration;
 using FriendsSociety.Shaurya.Data;
+using FriendsSociety.Shaurya.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,8 +27,20 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<DataContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddIdentity<User, Role>()
+    .AddEntityFrameworkStores<DataContext>()
+    .AddDefaultTokenProviders();
+
+
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 var app = builder.Build();
+
+// Seed all demo data at startup (service-based approach)
+if (builder.Configuration.GetValue<bool>("DatabaseSettings:SeedDemoData"))
+{
+    await ModelSeeder.SeedDemoDataAsync(app.Services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

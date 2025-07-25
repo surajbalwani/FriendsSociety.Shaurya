@@ -43,29 +43,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("AbilityTypeID");
 
                     b.ToTable("AbilityTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            AbilityTypeID = 1,
-                            Description = "Partial or total inability to hear",
-                            IsDeleted = false,
-                            Name = "Hearing Impairment"
-                        },
-                        new
-                        {
-                            AbilityTypeID = 2,
-                            Description = "Partial or total inability to see",
-                            IsDeleted = false,
-                            Name = "Visual Impairment"
-                        },
-                        new
-                        {
-                            AbilityTypeID = 3,
-                            Description = "Difficulty walking or moving",
-                            IsDeleted = false,
-                            Name = "Mobility Impairment"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Activity", b =>
@@ -89,22 +66,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("ActivityID");
 
                     b.ToTable("Activities");
-
-                    b.HasData(
-                        new
-                        {
-                            ActivityID = 1,
-                            IsDeleted = false,
-                            Name = "Wheelchair Basketball",
-                            Rules = "Standard 5v5 rules apply"
-                        },
-                        new
-                        {
-                            ActivityID = 2,
-                            IsDeleted = false,
-                            Name = "Blind Running",
-                            Rules = "Tethered guide required"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.ActivityCategory", b =>
@@ -131,14 +92,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasIndex("ActivityID");
 
                     b.ToTable("ActivityCategories");
-
-                    b.HasData(
-                        new
-                        {
-                            ActivityCategoryID = 1,
-                            AbilityTypeID = 2,
-                            ActivityID = 2
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Ground", b =>
@@ -159,20 +112,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("GroundID");
 
                     b.ToTable("Grounds");
-
-                    b.HasData(
-                        new
-                        {
-                            GroundID = 1,
-                            Location = "City Sports Complex",
-                            Name = "Main Arena"
-                        },
-                        new
-                        {
-                            GroundID = 2,
-                            Location = "Community Park",
-                            Name = "Open Ground"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.GroundAllocation", b =>
@@ -202,24 +141,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasIndex("GroundID");
 
                     b.ToTable("GroundAllocations");
-
-                    b.HasData(
-                        new
-                        {
-                            GroundAllocationID = 1,
-                            ActivityID = 1,
-                            EndTime = new DateTime(2025, 5, 1, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            GroundID = 1,
-                            StartTime = new DateTime(2025, 5, 1, 10, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            GroundAllocationID = 2,
-                            ActivityID = 2,
-                            EndTime = new DateTime(2025, 5, 1, 14, 30, 0, 0, DateTimeKind.Unspecified),
-                            GroundID = 2,
-                            StartTime = new DateTime(2025, 5, 1, 13, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Organization", b =>
@@ -243,114 +164,237 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("OrganizationID");
 
                     b.ToTable("Organizations");
-
-                    b.HasData(
-                        new
-                        {
-                            OrganizationID = 1,
-                            Contact = "hope@example.org",
-                            IsDeleted = false,
-                            Name = "Hope Foundation"
-                        });
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Role", b =>
                 {
-                    b.Property<int>("RoleID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleID"));
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Permissions")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("RoleID");
+                    b.Property<int>("RoleID")
+                        .HasColumnType("int");
 
-                    b.ToTable("Roles");
+                    b.HasKey("Id");
 
-                    b.HasData(
-                        new
-                        {
-                            RoleID = 1,
-                            Name = "Participant",
-                            Permissions = "ViewActivities"
-                        },
-                        new
-                        {
-                            RoleID = 2,
-                            Name = "Volunteer",
-                            Permissions = "ManageActivities,HelpParticipants"
-                        });
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.User", b =>
                 {
-                    b.Property<int>("UserID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("AbilityTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
 
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Contact")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<int>("OrganizationID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoleID")
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("UserID")
                         .HasColumnType("int");
 
-                    b.HasKey("UserID");
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("AbilityTypeID");
 
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
                     b.HasIndex("OrganizationID");
 
-                    b.HasIndex("RoleID");
+                    b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("AspNetUsers", (string)null);
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            UserID = 1,
-                            AbilityTypeID = 1,
-                            Age = 24,
-                            Contact = "arjun@example.com",
-                            IsDeleted = false,
-                            Name = "Arjun Mehta",
-                            OrganizationID = 1,
-                            RoleID = 1
-                        },
-                        new
-                        {
-                            UserID = 2,
-                            AbilityTypeID = 2,
-                            Age = 30,
-                            Contact = "nikita@example.com",
-                            IsDeleted = false,
-                            Name = "Nikita Shah",
-                            OrganizationID = 1,
-                            RoleID = 2
-                        });
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoleId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetRoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.ActivityCategory", b =>
@@ -407,15 +451,64 @@ namespace FriendsSociety.Shaurya.Migrations
 
                     b.HasOne("FriendsSociety.Shaurya.Entities.Role", "Role")
                         .WithMany("Users")
-                        .HasForeignKey("RoleID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("RoleId");
 
                     b.Navigation("AbilityType");
 
                     b.Navigation("Organization");
 
                     b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("FriendsSociety.Shaurya.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("FriendsSociety.Shaurya.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("FriendsSociety.Shaurya.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("FriendsSociety.Shaurya.Entities.Role", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FriendsSociety.Shaurya.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("FriendsSociety.Shaurya.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.AbilityType", b =>
