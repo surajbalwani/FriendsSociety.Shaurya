@@ -13,7 +13,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-var allowedOrigins = builder.Configuration.GetValue<string>("allowedOrigins")!.Split(",");
+var originsConfig = builder.Configuration.GetValue<string>("allowedOrigins");
+var allowedOrigins = originsConfig?.Split(",") ?? Array.Empty<string>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("angularApplication", builder2 =>
