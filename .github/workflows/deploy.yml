@@ -29,7 +29,7 @@ jobs:
         username: ${{ secrets.AZURE_VM_USER }}
         key: ${{ secrets.AZURE_SSH_KEY }}
         source: ./publish/
-        target: /var/www/my-dotnet-api
+        target: /var/www/project_shaurya/shaurya-api
 
     - name: Restart API on Azure VM
       uses: appleboy/ssh-action@v1.0.3
