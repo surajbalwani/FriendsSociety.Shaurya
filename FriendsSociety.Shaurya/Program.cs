@@ -1,3 +1,4 @@
+using Azure.Identity;
 using FriendsSociety.Shaurya.Configuration;
 using FriendsSociety.Shaurya.Data;
 using FriendsSociety.Shaurya.Entities;
@@ -7,6 +8,19 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+    .AddEnvironmentVariables();
+
+// Add Azure Key Vault only in production
+if (builder.Environment.IsProduction())
+{
+    var keyVaultName = "shaurya-kv"; // your vault name
+    var kvUri = $"https://{keyVaultName}.vault.azure.net/";
+    builder.Configuration.AddAzureKeyVault(new Uri(kvUri), new DefaultAzureCredential());
+}
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -37,7 +51,12 @@ builder.Services.AddIdentity<User, Role>()
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 var app = builder.Build();
 
-// Seed all demo data at startup (service-based approach)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+    db.Database.Migrate(); // applies any pending migrations
+}
+
 if (builder.Configuration.GetValue<bool>("DatabaseSettings:SeedDemoData"))
 {
     await ModelSeeder.SeedDemoDataAsync(app.Services);
