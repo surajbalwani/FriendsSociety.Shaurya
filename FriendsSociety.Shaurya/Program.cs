@@ -40,7 +40,14 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddDbContext<DataContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null // Let EF handle transient errors
+        )
+    );
 });
 
 builder.Services.AddIdentity<User, Role>()
