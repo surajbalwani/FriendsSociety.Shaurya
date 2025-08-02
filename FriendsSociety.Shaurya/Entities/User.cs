@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace FriendsSociety.Shaurya.Entities
 {
     public class User : IdentityUser
     {
-        public int UserID { get; set; }
         public Role? Role { get; set; }
 
         public int Age { get; set; }

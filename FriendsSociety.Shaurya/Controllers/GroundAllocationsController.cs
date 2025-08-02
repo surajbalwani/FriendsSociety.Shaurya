@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,6 +52,25 @@ namespace FriendsSociety.Shaurya.Controllers
                 return BadRequest();
             }
 
+            // Validate that StartTime is before EndTime
+            if (groundAllocation.StartTime >= groundAllocation.EndTime)
+            {
+                return BadRequest("Start time must be before end time.");
+            }
+
+            // Check for scheduling conflicts (excluding the current allocation being updated)
+            var hasConflict = await _context.GroundAllocations
+                .AnyAsync(ga => ga.GroundID == groundAllocation.GroundID && 
+                    ga.GroundAllocationID != id &&
+                    ((groundAllocation.StartTime >= ga.StartTime && groundAllocation.StartTime < ga.EndTime) ||
+                     (groundAllocation.EndTime > ga.StartTime && groundAllocation.EndTime <= ga.EndTime) ||
+                     (groundAllocation.StartTime <= ga.StartTime && groundAllocation.EndTime >= ga.EndTime)));
+
+            if (hasConflict)
+            {
+                return BadRequest("The ground is already allocated during the specified time period.");
+            }
+
             _context.Entry(groundAllocation).State = EntityState.Modified;
 
             try
@@ -78,6 +97,24 @@ namespace FriendsSociety.Shaurya.Controllers
         [HttpPost]
         public async Task<ActionResult<GroundAllocation>> PostGroundAllocation(GroundAllocation groundAllocation)
         {
+            // Validate that StartTime is before EndTime
+            if (groundAllocation.StartTime >= groundAllocation.EndTime)
+            {
+                return BadRequest("Start time must be before end time.");
+            }
+
+            // Check for scheduling conflicts
+            var hasConflict = await _context.GroundAllocations
+                .AnyAsync(ga => ga.GroundID == groundAllocation.GroundID &&
+                    ((groundAllocation.StartTime >= ga.StartTime && groundAllocation.StartTime < ga.EndTime) ||
+                     (groundAllocation.EndTime > ga.StartTime && groundAllocation.EndTime <= ga.EndTime) ||
+                     (groundAllocation.StartTime <= ga.StartTime && groundAllocation.EndTime >= ga.EndTime)));
+
+            if (hasConflict)
+            {
+                return BadRequest("The ground is already allocated during the specified time period.");
+            }
+
             _context.GroundAllocations.Add(groundAllocation);
             await _context.SaveChangesAsync();
 
