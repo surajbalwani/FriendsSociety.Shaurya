@@ -58,15 +58,47 @@ builder.Services.AddIdentity<User, Role>()
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+// Apply database migrations with error handling
+try
 {
-    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    db.Database.Migrate(); // applies any pending migrations
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        
+        logger.LogInformation("Applying database migrations...");
+        db.Database.Migrate(); // applies any pending migrations
+        logger.LogInformation("Database migrations applied successfully.");
+    }
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred while applying database migrations.");
+    // Don't throw in production to allow the app to start even if migrations fail
+    if (!app.Environment.IsProduction())
+    {
+        throw;
+    }
 }
 
-if (builder.Configuration.GetValue<bool>("DatabaseSettings:SeedDemoData"))
+// Seed demo data with error handling (only if enabled)
+var shouldSeedData = builder.Configuration.GetValue<bool>("DatabaseSettings:SeedDemoData");
+if (shouldSeedData)
 {
-    await ModelSeeder.SeedDemoDataAsync(app.Services);
+    try
+    {
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        logger.LogInformation("Starting demo data seeding...");
+        await ModelSeeder.SeedDemoDataAsync(app.Services);
+        logger.LogInformation("Demo data seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        var logger = app.Services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "An error occurred while seeding demo data.");
+        // Don't throw to allow the app to start even if seeding fails
+    }
 }
 
 // Configure the HTTP request pipeline.

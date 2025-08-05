@@ -18,9 +18,20 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
+    - name: Restore dependencies
+      run: |
+        cd FriendsSociety.Shaurya
+        dotnet restore
+
+    - name: Build project
+      run: |
+        cd FriendsSociety.Shaurya
+        dotnet build -c Release --no-restore
+
     - name: Publish app
       run: |
-        dotnet publish -c Release -o ./publish
+        cd FriendsSociety.Shaurya
+        dotnet publish -c Release -o ../publish --no-build
 
     - name: Copy files to Azure VM
       uses: appleboy/scp-action@v0.1.7
@@ -30,6 +41,7 @@ jobs:
         key: ${{ secrets.AZURE_SSH_KEY }}
         source: ./publish/
         target: /var/www/project_shaurya/shaurya-api
+        strip_components: 1
 
     - name: Restart API on Azure VM
       uses: appleboy/ssh-action@v1.0.3
