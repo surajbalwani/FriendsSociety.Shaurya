@@ -1,6 +1,7 @@
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace FriendsSociety.Shaurya.Data
 {

@@ -4,6 +4,7 @@ using FriendsSociety.Shaurya.Data;
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
