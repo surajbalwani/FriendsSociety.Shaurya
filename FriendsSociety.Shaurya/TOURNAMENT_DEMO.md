@@ -35,6 +35,40 @@ Tournament
 - Added **TournamentID**: Foreign key to Tournament (nullable)
 - Added **Tournament**: Navigation property to parent tournament
 
+## Seed Data for Testing
+
+The implementation includes comprehensive seed data in `ModelSeeder.cs`:
+
+### Sample Tournaments
+1. **Spring Adaptive Sports Championship 2025**
+   - Multi-day championship (May 1-3, 2025)
+   - Features Wheelchair Basketball and Blind Running
+   - Located at Central Sports Complex
+
+2. **Community Inclusion Games**
+   - Single-day event (June 15, 2025)
+   - Features Sitting Volleyball and Boccia Competition
+   - Located at Community Recreation Center
+
+3. **Inter-Organization Challenge**
+   - Multi-day competition (July 20-22, 2025)
+   - Features Swimming Relay
+   - Currently inactive (for testing inactive tournaments)
+
+### Sample Activities
+- **Tournament Activities**: 5 activities assigned to tournaments
+- **Standalone Activities**: 1 activity (Table Tennis) without tournament assignment
+- **Ground Allocations**: Each activity has scheduled ground assignments
+- **Activity Categories**: Proper ability type associations
+
+### Testing Scenarios
+The seed data provides various scenarios for testing:
+- Active vs inactive tournaments
+- Activities with and without tournament assignments
+- Multiple activities per tournament
+- Different ground types (arena, pool, courts)
+- Various time schedules and durations
+
 ## API Endpoints
 
 ### Tournament Management
@@ -50,6 +84,23 @@ Tournament
 - `DELETE /api/tournaments/{tournamentId}/activities/{activityId}` - Remove activity from tournament
 
 ## Usage Examples
+
+### Testing with Seed Data
+With the seed data, you can immediately test:
+
+```bash
+# Get all tournaments
+GET /api/tournaments
+
+# Get Spring Championship with all activities
+GET /api/tournaments/1
+
+# Get activities for Community Games
+GET /api/tournaments/2/activities
+
+# Add Table Tennis to Spring Championship
+POST /api/tournaments/1/activities/6
+```
 
 ### Creating a Tournament
 ```json
@@ -95,3 +146,4 @@ The implementation includes proper Entity Framework relationships:
 4. **Complete CRUD**: Full API operations for tournament management
 5. **Soft Deletes**: Non-destructive deletion preserves data integrity
 6. **Audit Trail**: Created and updated timestamps for tracking
+7. **Comprehensive Testing**: Rich seed data for immediate testing and development
