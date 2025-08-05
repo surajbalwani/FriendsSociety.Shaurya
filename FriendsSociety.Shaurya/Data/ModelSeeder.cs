@@ -13,7 +13,8 @@ namespace FriendsSociety.Shaurya.Data
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<ModelSeeder>>();
+            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger(nameof(ModelSeeder));
 
             try
             {
