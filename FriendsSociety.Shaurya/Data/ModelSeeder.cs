@@ -13,17 +13,17 @@ namespace FriendsSociety.Shaurya.Data
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-            var logger = Log.ForContext<ModelSeeder>();
+            var logger = Log.ForContext(typeof(ModelSeeder));
 
             try
             {
                 // Test database connection first
                 await context.Database.CanConnectAsync();
-                logger.LogInformation("Database connection verified successfully.");
+                logger.Information("Database connection verified successfully.");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Cannot connect to database. Skipping data seeding.");
+                logger.Error(ex, "Cannot connect to database. Skipping data seeding.");
                 return;
             }
 
@@ -307,7 +307,7 @@ namespace FriendsSociety.Shaurya.Data
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "An error occurred during data seeding. Some data may not have been seeded properly.");
+                logger.Error(ex, "An error occurred during data seeding. Some data may not have been seeded properly.");
                 throw; // Re-throw to be caught by the caller
             }
         }

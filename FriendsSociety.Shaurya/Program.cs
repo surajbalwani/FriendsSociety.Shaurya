@@ -4,7 +4,6 @@ using FriendsSociety.Shaurya.Data;
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 
@@ -75,17 +74,14 @@ try
     using (var scope = app.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-        
-        logger.LogInformation("Applying database migrations...");
+        Log.Information("Applying database migrations...");
         db.Database.Migrate(); // applies any pending migrations
-        logger.LogInformation("Database migrations applied successfully.");
+        Log.Information("Database migrations applied successfully.");
     }
 }
 catch (Exception ex)
 {
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred while applying database migrations.");
+    Log.Error(ex, "An error occurred while applying database migrations.");
     // Don't throw in production to allow the app to start even if migrations fail
     if (!app.Environment.IsProduction())
     {
@@ -99,15 +95,13 @@ if (shouldSeedData)
 {
     try
     {
-        var logger = app.Services.GetRequiredService<ILogger<Program>>();
-        logger.LogInformation("Starting demo data seeding...");
+        Log.Information("Starting demo data seeding...");
         await ModelSeeder.SeedDemoDataAsync(app.Services);
-        logger.LogInformation("Demo data seeding completed successfully.");
+        Log.Information("Demo data seeding completed successfully.");
     }
     catch (Exception ex)
     {
-        var logger = app.Services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding demo data.");
+        Log.Error(ex, "An error occurred while seeding demo data.");
         // Don't throw to allow the app to start even if seeding fails
     }
 }
