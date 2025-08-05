@@ -1,7 +1,7 @@
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace FriendsSociety.Shaurya.Data
 {
@@ -13,8 +13,7 @@ namespace FriendsSociety.Shaurya.Data
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-            var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
-            var logger = loggerFactory.CreateLogger(nameof(ModelSeeder));
+            var logger = Log.ForContext<ModelSeeder>();
 
             try
             {

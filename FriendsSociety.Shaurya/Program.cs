@@ -5,9 +5,19 @@ using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .WriteTo.Console()
+    .WriteTo.File("logs/app-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -120,4 +130,11 @@ app.MapGet("/", () => "Welcome to the API!");
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+finally
+{
+    Log.CloseAndFlush();
+}
