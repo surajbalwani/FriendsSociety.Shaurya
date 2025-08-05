@@ -304,6 +304,7 @@ namespace FriendsSociety.Shaurya.Data
                     }
                 }
             }
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "An error occurred during data seeding. Some data may not have been seeded properly.");
