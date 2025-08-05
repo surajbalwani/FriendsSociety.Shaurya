@@ -1,6 +1,7 @@
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace FriendsSociety.Shaurya.Data
 {
@@ -12,20 +13,35 @@ namespace FriendsSociety.Shaurya.Data
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+            var logger = Log.ForContext(typeof(ModelSeeder));
 
-            // === Roles ===
-            List<Role> rolesList = new List<Role>
+            try
             {
-                new Role { Name = "Participant", Permissions = "ViewActivities" },
-                new Role { Name = "Volunteer", Permissions = "ManageActivities,HelpParticipants" }
-            };
-            foreach (var role in rolesList)
-            {
-                if (!string.IsNullOrEmpty(role.Name) && !await roleManager.RoleExistsAsync(role.Name))
-                {
-                    await roleManager.CreateAsync(role);
-                }
+                // Test database connection first
+                await context.Database.CanConnectAsync();
+                logger.Information("Database connection verified successfully.");
             }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Cannot connect to database. Skipping data seeding.");
+                return;
+            }
+
+            try
+            {
+                // === Roles ===
+                List<Role> rolesList = new List<Role>
+                {
+                    new Role { Name = "Participant", Permissions = "ViewActivities" },
+                    new Role { Name = "Volunteer", Permissions = "ManageActivities,HelpParticipants" }
+                };
+                foreach (var role in rolesList)
+                {
+                    if (!string.IsNullOrEmpty(role.Name) && !await roleManager.RoleExistsAsync(role.Name))
+                    {
+                        await roleManager.CreateAsync(role);
+                    }
+                }
 
             // === Ability Types ===
             if (!context.AbilityTypes.Any())
@@ -287,6 +303,12 @@ namespace FriendsSociety.Shaurya.Data
                         }
                     }
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "An error occurred during data seeding. Some data may not have been seeded properly.");
+                throw; // Re-throw to be caught by the caller
             }
         }
     }

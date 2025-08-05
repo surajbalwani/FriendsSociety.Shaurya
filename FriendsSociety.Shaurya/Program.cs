@@ -4,9 +4,19 @@ using FriendsSociety.Shaurya.Data;
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .WriteTo.Console()
+    .WriteTo.File("logs/app-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 30)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -58,15 +68,42 @@ builder.Services.AddIdentity<User, Role>()
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("DatabaseSettings"));
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
+// Apply database migrations with error handling
+try
 {
-    var db = scope.ServiceProvider.GetRequiredService<DataContext>();
-    db.Database.Migrate(); // applies any pending migrations
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DataContext>();
+        Log.Information("Applying database migrations...");
+        db.Database.Migrate(); // applies any pending migrations
+        Log.Information("Database migrations applied successfully.");
+    }
+}
+catch (Exception ex)
+{
+    Log.Error(ex, "An error occurred while applying database migrations.");
+    // Don't throw in production to allow the app to start even if migrations fail
+    if (!app.Environment.IsProduction())
+    {
+        throw;
+    }
 }
 
-if (builder.Configuration.GetValue<bool>("DatabaseSettings:SeedDemoData"))
+// Seed demo data with error handling (only if enabled)
+var shouldSeedData = builder.Configuration.GetValue<bool>("DatabaseSettings:SeedDemoData");
+if (shouldSeedData)
 {
-    await ModelSeeder.SeedDemoDataAsync(app.Services);
+    try
+    {
+        Log.Information("Starting demo data seeding...");
+        await ModelSeeder.SeedDemoDataAsync(app.Services);
+        Log.Information("Demo data seeding completed successfully.");
+    }
+    catch (Exception ex)
+    {
+        Log.Error(ex, "An error occurred while seeding demo data.");
+        // Don't throw to allow the app to start even if seeding fails
+    }
 }
 
 // Configure the HTTP request pipeline.
@@ -87,4 +124,11 @@ app.MapGet("/", () => "Welcome to the API!");
 
 app.MapControllers();
 
-app.Run();
+try
+{
+    app.Run();
+}
+finally
+{
+    Log.CloseAndFlush();
+}

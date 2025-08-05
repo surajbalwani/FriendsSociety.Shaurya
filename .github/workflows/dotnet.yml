@@ -21,8 +21,14 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: |
+        cd FriendsSociety.Shaurya
+        dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: |
+        cd FriendsSociety.Shaurya
+        dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: |
+        cd FriendsSociety.Shaurya
+        dotnet test --no-build --verbosity normal
