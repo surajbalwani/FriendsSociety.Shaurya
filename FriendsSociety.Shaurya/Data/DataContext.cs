@@ -1,4 +1,4 @@
-﻿using FriendsSociety.Shaurya.Configuration;
+using FriendsSociety.Shaurya.Configuration;
 using FriendsSociety.Shaurya.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -23,6 +23,7 @@ namespace FriendsSociety.Shaurya.Data
         public DbSet<Ground> Grounds { get; set; }
         public DbSet<ActivityCategory> ActivityCategories { get; set; }
         public DbSet<GroundAllocation> GroundAllocations { get; set; }
+        public DbSet<Tournament> Tournaments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -41,6 +42,13 @@ namespace FriendsSociety.Shaurya.Data
                 .WithMany(o => o.Users)
                 .HasForeignKey(u => u.OrganizationID)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Tournament → Activity (One-to-Many)
+            modelBuilder.Entity<Activity>()
+                .HasOne(a => a.Tournament)
+                .WithMany(t => t.Activities)
+                .HasForeignKey(a => a.TournamentID)
+                .OnDelete(DeleteBehavior.SetNull);
 
             // ActivityCategory → Activity & AbilityType
             modelBuilder.Entity<ActivityCategory>()
