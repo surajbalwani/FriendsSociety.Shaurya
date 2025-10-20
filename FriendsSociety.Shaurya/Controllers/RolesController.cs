@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FriendsSociety.Shaurya.Data;
 using FriendsSociety.Shaurya.Entities;
 
+// After adding microsoft identity this controller has become redundant but keeping it for reference (needs to be cleaned up or rewritten in future)
 namespace FriendsSociety.Shaurya.Controllers
 {
     [Route("api/[controller]")]
@@ -39,45 +40,40 @@ namespace FriendsSociety.Shaurya.Controllers
 
         // PUT: api/Roles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(int id, Role role)
-        {
-            if (id != role.RoleID)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> PutRole(int id, Role role)
+        //{
+        //    _context.Entry(role).State = EntityState.Modified;
 
-            _context.Entry(role).State = EntityState.Modified;
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!RoleExists(id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!RoleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         // POST: api/Roles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Role>> PostRole(Role role)
-        {
-            _context.Roles.Add(role);
-            await _context.SaveChangesAsync();
+        //[HttpPost]
+        //public async Task<ActionResult<Role>> PostRole(Role role)
+        //{
+        //    _context.Roles.Add(role);
+        //    await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRole", new { id = role.RoleID }, role);
-        }
+        //    return CreatedAtAction("GetRole", new { id = role.RoleID }, role);
+        //}
 
         // DELETE: api/Roles/5
         [HttpDelete("{id}")]
@@ -95,9 +91,9 @@ namespace FriendsSociety.Shaurya.Controllers
             return NoContent();
         }
 
-        private bool RoleExists(int id)
-        {
-            return _context.Roles.Any(e => e.RoleID == id);
-        }
+        //private bool RoleExists(int id)
+        //{
+        //    return _context.Roles.Any(e => e.RoleID == id);
+        //}
     }
 }
