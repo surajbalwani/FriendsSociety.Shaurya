@@ -13,6 +13,7 @@ namespace FriendsSociety.Shaurya.Data
             using var scope = serviceProvider.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<DataContext>();
             var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
             var logger = Log.ForContext(typeof(ModelSeeder));
 
             try
@@ -47,7 +48,7 @@ namespace FriendsSociety.Shaurya.Data
                             Permissions = roleInfo.Permissions
                         };
                         var result = await roleManager.CreateAsync(role);
-                        
+
                         if (!result.Succeeded)
                         {
                             logger.Error("Failed to create role {RoleName}: {Errors}", 
@@ -55,7 +56,7 @@ namespace FriendsSociety.Shaurya.Data
                                 string.Join(", ", result.Errors.Select(e => e.Description)));
                             throw new Exception($"Failed to create role {roleInfo.Name}");
                         }
-                        
+
                         logger.Information("Created role {RoleName} successfully", roleInfo.Name);
                     }
                 }
@@ -86,26 +87,58 @@ namespace FriendsSociety.Shaurya.Data
                     // === Users ===
                     if (!context.Users.Any())
                     {
-                        context.Users.AddRange(
-                            new User
-                            {
-                                UserName = "Arjun Mehta",
-                                Age = 24,
-                                AbilityTypeID = abilityType1,
-                                OrganizationID = org.OrganizationID,
-                                Contact = "arjun@example.com",
-                                IsDeleted = false
-                            },
-                            new User
-                            {
-                                UserName = "Nikita Shah",
-                                Age = 30,
-                                AbilityTypeID = abilityType2,
-                                OrganizationID = org.OrganizationID,
-                                Contact = "nikita@example.com",
-                                IsDeleted = false
-                            }
-                        );
+                        // Use UserManager to create identity users and assign roles
+                        var pwd = "P@ssW0rd123!"; // demo password that should satisfy default password policy
+
+                        var user1 = new User
+                        {
+                            UserName = "arjun@example.com",
+                            Email = "arjun@example.com",
+                            Age = 24,
+                            AbilityTypeID = abilityType1,
+                            OrganizationID = org.OrganizationID,
+                            Contact = "arjun@example.com",
+                            IsDeleted = false,
+                            EmailConfirmed = true
+                        };
+
+                        var user2 = new User
+                        {
+                            UserName = "nikita@example.com",
+                            Email = "nikita@example.com",
+                            Age = 30,
+                            AbilityTypeID = abilityType2,
+                            OrganizationID = org.OrganizationID,
+                            Contact = "nikita@example.com",
+                            IsDeleted = false,
+                            EmailConfirmed = true
+                        };
+
+                        var create1 = await userManager.CreateAsync(user1, pwd);
+                        if (!create1.Succeeded)
+                        {
+                            logger.Error("Failed to create user {Email}: {Errors}", user1.Email, string.Join(", ", create1.Errors.Select(e => e.Description)));
+                        }
+                        else
+                        {
+                            var addRoleRes = await userManager.AddToRoleAsync(user1, "Volunteer");
+                            if (!addRoleRes.Succeeded)
+                                logger.Error("Failed to add role Volunteer to {Email}: {Errors}", user1.Email, string.Join(", ", addRoleRes.Errors.Select(e => e.Description)));
+                        }
+
+                        var create2 = await userManager.CreateAsync(user2, pwd);
+                        if (!create2.Succeeded)
+                        {
+                            logger.Error("Failed to create user {Email}: {Errors}", user2.Email, string.Join(", ", create2.Errors.Select(e => e.Description)));
+                        }
+                        else
+                        {
+                            var addRoleRes2 = await userManager.AddToRoleAsync(user2, "Participant");
+                            if (!addRoleRes2.Succeeded)
+                                logger.Error("Failed to add role Participant to {Email}: {Errors}", user2.Email, string.Join(", ", addRoleRes2.Errors.Select(e => e.Description)));
+                        }
+
+                        // Ensure changes are visible in the DbContext
                         await context.SaveChangesAsync();
                     }
                 }
