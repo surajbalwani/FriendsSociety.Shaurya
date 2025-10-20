@@ -23,6 +23,7 @@ namespace FriendsSociety.Shaurya.Data
         public DbSet<Ground> Grounds { get; set; }
         public DbSet<ActivityCategory> ActivityCategories { get; set; }
         public DbSet<GroundAllocation> GroundAllocations { get; set; }
+        public DbSet<TeamAssignment> TeamAssignments { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -75,6 +76,19 @@ namespace FriendsSociety.Shaurya.Data
                 .WithMany(g => g.GroundAllocations)
                 .HasForeignKey(ga => ga.GroundID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // TeamAssignment → Leader (User) & Ground
+            modelBuilder.Entity<TeamAssignment>()
+                .HasOne(ta => ta.Leader)
+                .WithMany()
+                .HasForeignKey(ta => ta.LeaderID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TeamAssignment>()
+                .HasOne(ta => ta.Ground)
+                .WithMany()
+                .HasForeignKey(ta => ta.GroundID)
+                .OnDelete(DeleteBehavior.SetNull);
 
             if (_shouldSeed)
             {
