@@ -30,16 +30,33 @@ namespace FriendsSociety.Shaurya.Data
             try
             {
                 // === Roles ===
-                List<Role> rolesList = new List<Role>
+                var roles = new List<(string Name, string Permissions)>
                 {
-                    new Role { Name = "Participant", Permissions = "ViewActivities" },
-                    new Role { Name = "Volunteer", Permissions = "ManageActivities,HelpParticipants" }
+                    ("Participant", "ViewActivities"),
+                    ("Volunteer", "ManageActivities,HelpParticipants")
                 };
-                foreach (var role in rolesList)
+
+                foreach (var roleInfo in roles)
                 {
-                    if (!string.IsNullOrEmpty(role.Name) && !await roleManager.RoleExistsAsync(role.Name))
+                    if (!await roleManager.RoleExistsAsync(roleInfo.Name))
                     {
-                        await roleManager.CreateAsync(role);
+                        var role = new Role
+                        {
+                            Name = roleInfo.Name,
+                            NormalizedName = roleInfo.Name.ToUpperInvariant(),
+                            Permissions = roleInfo.Permissions
+                        };
+                        var result = await roleManager.CreateAsync(role);
+                        
+                        if (!result.Succeeded)
+                        {
+                            logger.Error("Failed to create role {RoleName}: {Errors}", 
+                                roleInfo.Name, 
+                                string.Join(", ", result.Errors.Select(e => e.Description)));
+                            throw new Exception($"Failed to create role {roleInfo.Name}");
+                        }
+                        
+                        logger.Information("Created role {RoleName} successfully", roleInfo.Name);
                     }
                 }
 

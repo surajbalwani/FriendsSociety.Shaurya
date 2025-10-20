@@ -5,7 +5,6 @@ using FriendsSociety.Shaurya.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
