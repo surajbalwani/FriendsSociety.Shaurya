@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FriendsSociety.Shaurya.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase
