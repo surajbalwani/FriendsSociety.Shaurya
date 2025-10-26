@@ -17,6 +17,8 @@ namespace FriendsSociety.Shaurya.Data
 
         override public DbSet<User> Users { get; set; }
         override public DbSet<Role> Roles { get; set; }
+        public DbSet<Volunteer> Volunteers { get; set; }
+        public DbSet<Participant> Participants { get; set; }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<AbilityType> AbilityTypes { get; set; }
         public DbSet<Activity> Activities { get; set; }
@@ -42,6 +44,20 @@ namespace FriendsSociety.Shaurya.Data
                 .HasOne(u => u.Organization)
                 .WithMany(o => o.Users)
                 .HasForeignKey(u => u.OrganizationID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Participant → Organization
+            modelBuilder.Entity<Participant>()
+                .HasOne(p => p.Organization)
+                .WithMany()
+                .HasForeignKey(p => p.OrganizationID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Participant → AbilityType
+            modelBuilder.Entity<Participant>()
+                .HasOne(p => p.AbilityType)
+                .WithMany()
+                .HasForeignKey(p => p.AbilityTypeID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Tournament → Activity (One-to-Many)
@@ -77,7 +93,7 @@ namespace FriendsSociety.Shaurya.Data
                 .HasForeignKey(ga => ga.GroundID)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // TeamAssignment → Leader (User) & Ground
+            // TeamAssignment → Leader (Volunteer) & Ground
             modelBuilder.Entity<TeamAssignment>()
                 .HasOne(ta => ta.Leader)
                 .WithMany()

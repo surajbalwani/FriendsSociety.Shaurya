@@ -100,13 +100,13 @@ namespace FriendsSociety.Shaurya.Controllers
                     .ToList();
             }
 
-            var members = await _context.Users
-                .Where(u => memberIds.Contains(u.UserID) && !u.IsDeleted)
-                .Select(u => new
+            var members = await _context.Volunteers
+                .Where(v => memberIds.Contains(v.VolunteerID) && !v.IsDeleted)
+                .Select(v => new
                 {
-                    u.UserID,
-                    u.UserName,
-                    u.Contact
+                    VolunteerID = v.VolunteerID,
+                    Name = v.Name,
+                    Contact = v.Contact
                 })
                 .ToListAsync();
 

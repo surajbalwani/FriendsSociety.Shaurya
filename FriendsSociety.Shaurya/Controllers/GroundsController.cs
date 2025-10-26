@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FriendsSociety.Shaurya.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GroundsController : ControllerBase

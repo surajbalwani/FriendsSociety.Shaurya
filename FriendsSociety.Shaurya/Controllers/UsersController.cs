@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace FriendsSociety.Shaurya.Controllers
 {
-    [Authorize(Roles = "Volunteer")]
+    //[Authorize(Roles = "Volunteer")]
     [Route("api/[controller]")]
     [ApiController]
     public class UsersController : ControllerBase

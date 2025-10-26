@@ -4,6 +4,7 @@ using FriendsSociety.Shaurya.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriendsSociety.Shaurya.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251024103218_newMigration2")]
+    partial class newMigration2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,63 +188,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasKey("OrganizationID");
 
                     b.ToTable("Organizations");
-                });
-
-            modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Participant", b =>
-                {
-                    b.Property<int>("ParticipantID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ParticipantID"));
-
-                    b.Property<int>("AbilityTypeID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("BloodGroup")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Contact")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("EmergencyContact")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Gender")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("MedicalNotes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("OrganizationID")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ParticipantID");
-
-                    b.HasIndex("AbilityTypeID");
-
-                    b.HasIndex("OrganizationID");
-
-                    b.ToTable("Participants");
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Role", b =>
@@ -599,25 +545,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.Navigation("Activity");
 
                     b.Navigation("Ground");
-                });
-
-            modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Participant", b =>
-                {
-                    b.HasOne("FriendsSociety.Shaurya.Entities.AbilityType", "AbilityType")
-                        .WithMany()
-                        .HasForeignKey("AbilityTypeID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("FriendsSociety.Shaurya.Entities.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AbilityType");
-
-                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.TeamAssignment", b =>
