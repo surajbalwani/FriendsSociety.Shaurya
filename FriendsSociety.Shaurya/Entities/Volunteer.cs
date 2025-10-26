@@ -6,6 +6,10 @@ namespace FriendsSociety.Shaurya.Entities
 
         public required string Name { get; set; }
 
+        public int Age { get; set; }
+
+        public string? BloodGroup { get; set; }
+
         public string? Contact { get; set; }
 
         public string? WhatsAppNo { get; set; }

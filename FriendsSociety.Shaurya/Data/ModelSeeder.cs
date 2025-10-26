@@ -259,6 +259,137 @@ namespace FriendsSociety.Shaurya.Data
                             context.Grounds.AddRange(grounds);
                             await context.SaveChangesAsync();
 
+                            // === Volunteers ===
+                            if (!context.Volunteers.Any())
+                            {
+                                var volunteers = new[]
+                                {
+                                    new Volunteer 
+                                    { 
+                                        Name = "Rajesh Kumar", 
+                                        Age = 28, 
+                                        BloodGroup = "O+", 
+                                        Contact = "9876543210",
+                                        WhatsAppNo = "9876543210",
+                                        Email = "rajesh.kumar@example.com",
+                                        Address = "123, MG Road, Bangalore",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Priya Sharma", 
+                                        Age = 25, 
+                                        BloodGroup = "A+", 
+                                        Contact = "9123456789",
+                                        WhatsAppNo = "9123456789",
+                                        Email = "priya.sharma@example.com",
+                                        Address = "456, Park Street, Mumbai",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Amit Patel", 
+                                        Age = 32, 
+                                        BloodGroup = "B+", 
+                                        Contact = "9988776655",
+                                        WhatsAppNo = "9988776655",
+                                        Email = "amit.patel@example.com",
+                                        Address = "789, SG Highway, Ahmedabad",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Sneha Reddy", 
+                                        Age = 27, 
+                                        BloodGroup = "AB+", 
+                                        Contact = "9445566778",
+                                        WhatsAppNo = "9445566778",
+                                        Email = "sneha.reddy@example.com",
+                                        Address = "321, Brigade Road, Hyderabad",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Vikram Singh", 
+                                        Age = 30, 
+                                        BloodGroup = "O-", 
+                                        Contact = "9556677889",
+                                        WhatsAppNo = "9556677889",
+                                        Email = "vikram.singh@example.com",
+                                        Address = "654, Connaught Place, Delhi",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Anjali Desai", 
+                                        Age = 24, 
+                                        BloodGroup = "A-", 
+                                        Contact = "9667788990",
+                                        WhatsAppNo = "9667788990",
+                                        Email = "anjali.desai@example.com",
+                                        Address = "987, FC Road, Pune",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Karthik Nair", 
+                                        Age = 29, 
+                                        BloodGroup = "B-", 
+                                        Contact = "9778899001",
+                                        WhatsAppNo = "9778899001",
+                                        Email = "karthik.nair@example.com",
+                                        Address = "147, MG Road, Kochi",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Meera Iyer", 
+                                        Age = 26, 
+                                        BloodGroup = "AB-", 
+                                        Contact = "9889900112",
+                                        WhatsAppNo = "9889900112",
+                                        Email = "meera.iyer@example.com",
+                                        Address = "258, Anna Salai, Chennai",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Arjun Gupta", 
+                                        Age = 31, 
+                                        BloodGroup = "O+", 
+                                        Contact = "9990011223",
+                                        WhatsAppNo = "9990011223",
+                                        Email = "arjun.gupta@example.com",
+                                        Address = "369, Park Road, Kolkata",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    },
+                                    new Volunteer 
+                                    { 
+                                        Name = "Deepika Menon", 
+                                        Age = 23, 
+                                        BloodGroup = "A+", 
+                                        Contact = "9001122334",
+                                        WhatsAppNo = "9001122334",
+                                        Email = "deepika.menon@example.com",
+                                        Address = "741, Beach Road, Visakhapatnam",
+                                        IsDeleted = false,
+                                        CreatedDate = DateTime.Now
+                                    }
+                                };
+                                context.Volunteers.AddRange(volunteers);
+                                await context.SaveChangesAsync();
+                                logger.Information("Seeded {Count} volunteers successfully", volunteers.Length);
+                            }
+
                             // === Ground Allocation ===
                             if (!context.GroundAllocations.Any())
                             {

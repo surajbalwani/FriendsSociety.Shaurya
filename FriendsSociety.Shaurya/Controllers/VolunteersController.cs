@@ -31,6 +31,8 @@ namespace FriendsSociety.Shaurya.Controllers
                 {
                     v.VolunteerID,
                     v.Name,
+                    v.Age,
+                    v.BloodGroup,
                     v.Contact,
                     v.WhatsAppNo,
                     v.Email,
@@ -54,6 +56,8 @@ namespace FriendsSociety.Shaurya.Controllers
                 {
                     v.VolunteerID,
                     v.Name,
+                    v.Age,
+                    v.BloodGroup,
                     v.Contact,
                     v.WhatsAppNo,
                     v.Email,
@@ -84,6 +88,8 @@ namespace FriendsSociety.Shaurya.Controllers
             }
 
             volunteer.Name = volunteerDto.Name;
+            volunteer.Age = volunteerDto.Age;
+            volunteer.BloodGroup = volunteerDto.BloodGroup;
             volunteer.Contact = volunteerDto.Contact;
             volunteer.WhatsAppNo = volunteerDto.WhatsAppNo;
             volunteer.Email = volunteerDto.Email;
@@ -116,6 +122,8 @@ namespace FriendsSociety.Shaurya.Controllers
             var volunteer = new Volunteer
             {
                 Name = volunteerDto.Name,
+                Age = volunteerDto.Age,
+                BloodGroup = volunteerDto.BloodGroup,
                 Contact = volunteerDto.Contact,
                 WhatsAppNo = volunteerDto.WhatsAppNo,
                 Email = volunteerDto.Email,
@@ -158,6 +166,8 @@ namespace FriendsSociety.Shaurya.Controllers
     public class VolunteerCreateDto
     {
         public required string Name { get; set; }
+        public int Age { get; set; }
+        public string? BloodGroup { get; set; }
         public string? Contact { get; set; }
         public string? WhatsAppNo { get; set; }
         public string? Email { get; set; }
@@ -167,6 +177,8 @@ namespace FriendsSociety.Shaurya.Controllers
     public class VolunteerUpdateDto
     {
         public required string Name { get; set; }
+        public int Age { get; set; }
+        public string? BloodGroup { get; set; }
         public string? Contact { get; set; }
         public string? WhatsAppNo { get; set; }
         public string? Email { get; set; }
