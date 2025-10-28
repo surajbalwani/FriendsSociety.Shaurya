@@ -66,12 +66,16 @@ namespace FriendsSociety.Shaurya.Data
             {
                 var abilityTypes = new[]
                 {
-                    new AbilityType { Name = "Hearing Impairment", Description = "Partial or total inability to hear", IsDeleted = false },
-                    new AbilityType { Name = "Visual Impairment", Description = "Partial or total inability to see", IsDeleted = false },
-                    new AbilityType { Name = "Mobility Impairment", Description = "Difficulty walking or moving", IsDeleted = false }
+                    new AbilityType { Name = "Physically challenged by leg", Description = "Physical disability affecting leg movement", IsDeleted = false },
+                    new AbilityType { Name = "Physically challenged by Hand", Description = "Physical disability affecting hand/arm movement", IsDeleted = false },
+                    new AbilityType { Name = "Intellectually challenged", Description = "Intellectual or cognitive disability", IsDeleted = false },
+                    new AbilityType { Name = "DEAF AND DUMB", Description = "Deaf and speech impaired", IsDeleted = false },
+                    new AbilityType { Name = "VISUALLY IMPAIRED & PARTIALLY VISUALLY IMPAIRED", Description = "Visual impairment or partial blindness", IsDeleted = false },
+                    new AbilityType { Name = "LEARNING DISABILITY", Description = "Learning difficulties and disabilities", IsDeleted = false }
                 };
                 context.AbilityTypes.AddRange(abilityTypes);
                 await context.SaveChangesAsync();
+                logger.Information("Seeded {Count} ability types successfully", abilityTypes.Length);
 
                 // Get generated IDs
                 var abilityType1 = abilityTypes[0].AbilityTypeID;
@@ -480,6 +484,61 @@ namespace FriendsSociety.Shaurya.Data
                                     }
                                 );
                                 await context.SaveChangesAsync();
+                            }
+
+                            // === Games ===
+                            if (!context.Games.Any())
+                            {
+                                var games = new List<Game>();
+                                var gameDefinitions = new[]
+                                {
+                                    new { Id = 1, Name = "Archery" },
+                                    new { Id = 2, Name = "Bocce" },
+                                    new { Id = 3, Name = "Carrom" },
+                                    new { Id = 4, Name = "Goal The Ball" },
+                                    new { Id = 5, Name = "Shotput" },
+                                    new { Id = 6, Name = "50m Race" },
+                                    new { Id = 7, Name = "100m Race" },
+                                    new { Id = 8, Name = "200m Race" }
+                                };
+
+                                var ageCategories = new[]
+                                {
+                                    new { Code = "A", Start = 8, End = 12 },
+                                    new { Code = "B", Start = 13, End = 17 },
+                                    new { Code = "C", Start = 18, End = 22 },
+                                    new { Code = "D", Start = 23, End = 27 }
+                                };
+
+                                // Create games for each combination
+                                for (int disabilityCode = 1; disabilityCode <= 6; disabilityCode++)
+                                {
+                                    foreach (var ageCategory in ageCategories)
+                                    {
+                                        foreach (var gameDef in gameDefinitions)
+                                        {
+                                            var gameCode = $"{disabilityCode}{ageCategory.Code}{gameDef.Id:D2}";
+                                            games.Add(new Game
+                                            {
+                                                Name = gameDef.Name,
+                                                GameCode = gameCode,
+                                                GameCodeNumber = gameDef.Id,
+                                                DisabilityTypeCode = disabilityCode,
+                                                AgeCategory = ageCategory.Code,
+                                                AgeRangeStart = ageCategory.Start,
+                                                AgeRangeEnd = ageCategory.End,
+                                                AbilityTypeID = abilityTypes[disabilityCode - 1].AbilityTypeID,
+                                                Description = $"{gameDef.Name} for {abilityTypes[disabilityCode - 1].Name}, Age {ageCategory.Start}-{ageCategory.End}",
+                                                Rules = $"Standard rules for {gameDef.Name}",
+                                                IsDeleted = false
+                                            });
+                                        }
+                                    }
+                                }
+
+                                context.Games.AddRange(games);
+                                await context.SaveChangesAsync();
+                                logger.Information("Seeded {Count} games successfully", games.Count);
                             }
                         }
                     }

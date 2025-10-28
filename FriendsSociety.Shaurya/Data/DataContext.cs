@@ -27,6 +27,7 @@ namespace FriendsSociety.Shaurya.Data
         public DbSet<GroundAllocation> GroundAllocations { get; set; }
         public DbSet<TeamAssignment> TeamAssignments { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<Game> Games { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -105,6 +106,18 @@ namespace FriendsSociety.Shaurya.Data
                 .WithMany()
                 .HasForeignKey(ta => ta.GroundID)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Game → AbilityType
+            modelBuilder.Entity<Game>()
+                .HasOne(g => g.AbilityType)
+                .WithMany()
+                .HasForeignKey(g => g.AbilityTypeID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Unique constraint on GameCode
+            modelBuilder.Entity<Game>()
+                .HasIndex(g => g.GameCode)
+                .IsUnique();
 
             if (_shouldSeed)
             {

@@ -4,6 +4,7 @@ using FriendsSociety.Shaurya.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FriendsSociety.Shaurya.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20251027042319_shauryaDatabase2")]
+    partial class shauryaDatabase2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,66 +100,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.HasIndex("ActivityID");
 
                     b.ToTable("ActivityCategories");
-                });
-
-            modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Game", b =>
-                {
-                    b.Property<int>("GameID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GameID"));
-
-                    b.Property<int>("AbilityTypeID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AgeCategory")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("AgeRangeEnd")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AgeRangeStart")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DisabilityTypeCode")
-                        .HasColumnType("int");
-
-                    b.Property<string>("GameCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("GameCodeNumber")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Rules")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("GameID");
-
-                    b.HasIndex("AbilityTypeID");
-
-                    b.HasIndex("GameCode")
-                        .IsUnique();
-
-                    b.ToTable("Games");
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Ground", b =>
@@ -664,17 +607,6 @@ namespace FriendsSociety.Shaurya.Migrations
                     b.Navigation("AbilityType");
 
                     b.Navigation("Activity");
-                });
-
-            modelBuilder.Entity("FriendsSociety.Shaurya.Entities.Game", b =>
-                {
-                    b.HasOne("FriendsSociety.Shaurya.Entities.AbilityType", "AbilityType")
-                        .WithMany()
-                        .HasForeignKey("AbilityTypeID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("AbilityType");
                 });
 
             modelBuilder.Entity("FriendsSociety.Shaurya.Entities.GroundAllocation", b =>
