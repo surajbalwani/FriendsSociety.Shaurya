@@ -28,6 +28,7 @@ namespace FriendsSociety.Shaurya.Data
         public DbSet<TeamAssignment> TeamAssignments { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<Game> Games { get; set; }
+        public DbSet<ParticipantGame> ParticipantGames { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -118,6 +119,20 @@ namespace FriendsSociety.Shaurya.Data
             modelBuilder.Entity<Game>()
                 .HasIndex(g => g.GameCode)
                 .IsUnique();
+
+            // ParticipantGame → Participant
+            modelBuilder.Entity<ParticipantGame>()
+                .HasOne(pg => pg.Participant)
+                .WithMany()
+                .HasForeignKey(pg => pg.ParticipantID)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ParticipantGame → Game
+            modelBuilder.Entity<ParticipantGame>()
+                .HasOne(pg => pg.Game)
+                .WithMany()
+                .HasForeignKey(pg => pg.GameID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             if (_shouldSeed)
             {

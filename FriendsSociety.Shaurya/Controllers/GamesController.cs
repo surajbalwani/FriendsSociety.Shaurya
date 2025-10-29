@@ -133,6 +133,40 @@ namespace FriendsSociety.Shaurya.Controllers
             }
         }
 
+        // GET: api/Games/ByAgeAndAbility?age={age}&abilityTypeId={abilityTypeId}
+        [HttpGet("ByAgeAndAbility")]
+        public async Task<ActionResult<IEnumerable<Game>>> GetGamesByAgeAndAbility([FromQuery] int age, [FromQuery] int abilityTypeId)
+        {
+            try
+            {
+                // Determine age category based on age
+                string ageCategory;
+                if (age >= 8 && age <= 12) ageCategory = "A";
+                else if (age >= 13 && age <= 17) ageCategory = "B";
+                else if (age >= 18 && age <= 22) ageCategory = "C";
+                else if (age >= 23 && age <= 27) ageCategory = "D";
+                else
+                {
+                    return BadRequest("Age must be between 8 and 27 years");
+                }
+
+                var games = await _context.Games
+                    .Include(g => g.AbilityType)
+                    .Where(g => g.AgeCategory == ageCategory && 
+                                g.AbilityTypeID == abilityTypeId && 
+                                !g.IsDeleted)
+                    .OrderBy(g => g.Name)
+                    .ToListAsync();
+
+                return Ok(games);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving games for age {Age} and ability type {AbilityTypeId}", age, abilityTypeId);
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
         // GET: api/Games/GroupedByDisability
         [HttpGet("GroupedByDisability")]
         public async Task<ActionResult<object>> GetGamesGroupedByDisability()
@@ -179,6 +213,63 @@ namespace FriendsSociety.Shaurya.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving grouped games");
+                return StatusCode(500, "Internal server error");
+            }
+        }
+
+        // GET: api/Games/Participation
+        [HttpGet("Participation")]
+        public async Task<ActionResult<object>> GetGameParticipation()
+        {
+            try
+            {
+                var games = await _context.Games
+                    .Include(g => g.AbilityType)
+                    .Where(g => !g.IsDeleted)
+                    .ToListAsync();
+
+                var participantGames = await _context.ParticipantGames
+                    .Where(pg => !pg.IsDeleted)
+                    .GroupBy(pg => pg.GameID)
+                    .Select(g => new
+                    {
+                        GameID = g.Key,
+                        ParticipantCount = g.Count()
+                    })
+                    .ToListAsync();
+
+                var result = games
+                    .GroupBy(g => new { g.DisabilityTypeCode, g.AbilityType!.Name })
+                    .Select(disabilityGroup => new
+                    {
+                        DisabilityTypeCode = disabilityGroup.Key.DisabilityTypeCode,
+                        DisabilityTypeName = disabilityGroup.Key.Name,
+                        TotalParticipants = participantGames
+                            .Where(pg => disabilityGroup.Select(g => g.GameID).Contains(pg.GameID))
+                            .Sum(pg => pg.ParticipantCount),
+                        Games = disabilityGroup
+                            .Select(game => new
+                            {
+                                game.GameID,
+                                game.Name,
+                                game.GameCode,
+                                game.AgeCategory,
+                                AgeRange = $"{game.AgeRangeStart}-{game.AgeRangeEnd}",
+                                ParticipantCount = participantGames
+                                    .FirstOrDefault(pg => pg.GameID == game.GameID)?.ParticipantCount ?? 0
+                            })
+                            .OrderBy(g => g.AgeCategory)
+                            .ThenBy(g => g.Name)
+                            .ToList()
+                    })
+                    .OrderBy(g => g.DisabilityTypeCode)
+                    .ToList();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving game participation");
                 return StatusCode(500, "Internal server error");
             }
         }

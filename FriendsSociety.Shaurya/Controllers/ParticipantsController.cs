@@ -29,28 +29,44 @@ namespace FriendsSociety.Shaurya.Controllers
                 .Include(p => p.Organization)
                 .Include(p => p.AbilityType)
                 .Where(p => !p.IsDeleted)
-                .Select(p => new
-                {
-                    p.ParticipantID,
-                    p.Name,
-                    p.Age,
-                    p.Gender,
-                    p.BloodGroup,
-                    p.OrganizationID,
-                    OrganizationName = p.Organization != null ? p.Organization.Name : "Unknown",
-                    p.AbilityTypeID,
-                    AbilityTypeName = p.AbilityType != null ? p.AbilityType.Name : "Unknown",
-                    p.Contact,
-                    p.EmergencyContact,
-                    p.Address,
-                    p.MedicalNotes,
-                    p.IsDeleted,
-                    p.CreatedDate,
-                    p.UpdatedDate
-                })
                 .ToListAsync();
 
-            return Ok(participants);
+            var participantIds = participants.Select(p => p.ParticipantID).ToList();
+            var participantGames = await _context.ParticipantGames
+                .Include(pg => pg.Game)
+                .Where(pg => participantIds.Contains(pg.ParticipantID) && !pg.IsDeleted)
+                .ToListAsync();
+
+            var result = participants.Select(p => new
+            {
+                p.ParticipantID,
+                p.Name,
+                p.Age,
+                p.Gender,
+                p.BloodGroup,
+                p.OrganizationID,
+                OrganizationName = p.Organization != null ? p.Organization.Name : "Unknown",
+                p.AbilityTypeID,
+                AbilityTypeName = p.AbilityType != null ? p.AbilityType.Name : "Unknown",
+                p.Contact,
+                p.EmergencyContact,
+                p.Address,
+                p.MedicalNotes,
+                p.IsDeleted,
+                p.CreatedDate,
+                p.UpdatedDate,
+                Games = participantGames
+                    .Where(pg => pg.ParticipantID == p.ParticipantID)
+                    .Select(pg => new
+                    {
+                        pg.GameID,
+                        GameName = pg.Game != null ? pg.Game.Name : "Unknown",
+                        GameCode = pg.Game != null ? pg.Game.GameCode : ""
+                    })
+                    .ToList()
+            });
+
+            return Ok(result);
         }
 
         // GET: api/Participants/5
@@ -155,6 +171,33 @@ namespace FriendsSociety.Shaurya.Controllers
             _context.Participants.Add(participant);
             await _context.SaveChangesAsync();
 
+            // Add game selections
+            if (participantDto.Game1ID.HasValue)
+            {
+                var participantGame1 = new ParticipantGame
+                {
+                    ParticipantID = participant.ParticipantID,
+                    GameID = participantDto.Game1ID.Value,
+                    RegisteredDate = DateTime.Now,
+                    IsDeleted = false
+                };
+                _context.ParticipantGames.Add(participantGame1);
+            }
+
+            if (participantDto.Game2ID.HasValue)
+            {
+                var participantGame2 = new ParticipantGame
+                {
+                    ParticipantID = participant.ParticipantID,
+                    GameID = participantDto.Game2ID.Value,
+                    RegisteredDate = DateTime.Now,
+                    IsDeleted = false
+                };
+                _context.ParticipantGames.Add(participantGame2);
+            }
+
+            await _context.SaveChangesAsync();
+
             return CreatedAtAction("GetParticipant", new { id = participant.ParticipantID }, participant);
         }
 
@@ -195,6 +238,8 @@ namespace FriendsSociety.Shaurya.Controllers
         public string? EmergencyContact { get; set; }
         public string? Address { get; set; }
         public string? MedicalNotes { get; set; }
+        public int? Game1ID { get; set; } // Required game selection
+        public int? Game2ID { get; set; } // Optional second game
     }
 
     public class ParticipantUpdateDto
@@ -209,5 +254,7 @@ namespace FriendsSociety.Shaurya.Controllers
         public string? EmergencyContact { get; set; }
         public string? Address { get; set; }
         public string? MedicalNotes { get; set; }
+        public int? Game1ID { get; set; }
+        public int? Game2ID { get; set; }
     }
 }
